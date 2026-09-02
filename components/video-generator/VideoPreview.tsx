@@ -27,10 +27,9 @@ export function VideoPreview({ images, colors, speed, content }: Props) {
       {images.length === 0 ? <div className={styles.emptyPreview}><div className={styles.bagIcon}>♡</div><strong>Seu vídeo começa aqui</strong><span>Adicione de 1 a 10 imagens para visualizar</span></div> : images.map((image, index) => (
         <div key={image.id} className={`${styles.slide} ${index === visibleIndex ? styles.activeSlide : ""} ${styles[`entrance${index % 5}`]}`} aria-hidden={index !== visibleIndex}>
           <div className={styles.productCard}><img src={image.url} alt={`Produto ${index + 1}`} /></div>
-          <div className={`${styles.caption} ${styles[`captionStyle${index % 3}`]}`}><small>{content.benefit || "UM ACHADINHO PARA VOCÊ"}</small><strong>{content.product || "Seu produto"}</strong><span className={styles.price}>{content.price || "Preço especial"}</span><span className={styles.offerText}>{content.phraseId === "daily-find" ? `Pode ser uma boa opção para quem busca ${content.benefit || "praticidade"}.` : `Ideal para ${content.benefit || "facilitar seu dia"}.`}</span><b className={styles.cta}>{content.cta || "Veja aqui"} <i>→</i></b></div>
+          <div className={`${styles.caption} ${styles[`captionStyle${index % 3}`]}`}><strong>{content.product || "Seu produto"}</strong><span className={styles.price}>{content.price || "Preço especial"}</span><span className={styles.offerText}>{content.phraseId === "daily-find" ? `Pode ser uma boa opção para quem busca ${content.benefit || "praticidade"}.` : `Ideal para ${content.benefit || "facilitar seu dia"}.`}</span><b className={styles.cta}>{content.cta || "Veja aqui"} <i>→</i></b></div>
         </div>
       ))}
-      {images.length > 0 && <div className={styles.progress}>{images.map((image, index) => <i key={image.id} className={index === visibleIndex ? styles.currentProgress : ""} />)}</div>}
       <button type="button" className={styles.inFrameFullscreen} onClick={fullscreen} aria-label="Abrir preview em tela cheia">⛶</button>
     </div>
     <p className={styles.previewHint}>A prévia se repete automaticamente em loop</p>
