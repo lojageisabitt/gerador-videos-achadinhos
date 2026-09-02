@@ -1,4 +1,4 @@
-import type { ColorConfig, ColorPreset, Speed } from "@/types/generator";
+import type { ColorConfig, ColorPreset, PhraseId, ProductContent, Speed } from "@/types/generator";
 
 export const MAX_IMAGES = 10;
 export const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
@@ -15,3 +15,19 @@ export const SPEEDS: Array<{ value: Speed; label: string; seconds: number }> = [
   { value: "fast", label: "Rápida", seconds: 2.5 },
 ];
 export const getSlideDuration = (speed: Speed) => SPEEDS.find((item) => item.value === speed)?.seconds ?? 3.8;
+
+export const DEFAULT_CONTENT: ProductContent = {
+  phraseId: "daily-find",
+  product: "Kit de divulgação de achadinhos",
+  price: "R$ 29,90",
+  benefit: "divulgar ofertas com rapidez",
+  link: "",
+  cta: "Veja aqui",
+};
+
+export const PHRASES: Array<{ id: PhraseId; name: string; badge: string; template: string }> = [
+  { id: "daily-find", name: "Achado do dia", badge: "ACHADO DO DIA", template: "Achei [PRODUTO] por [PREÇO] e pode ser uma boa opção para quem busca [BENEFÍCIO]. Veja aqui: [LINK]" },
+  { id: "quick-offer", name: "Oferta rápida", badge: "OFERTA RÁPIDA", template: "Olha esse achadinho: [PRODUTO] por [PREÇO]. Ideal para [BENEFÍCIO]. Link: [LINK]" },
+];
+
+export const getPhrase = (id: PhraseId) => PHRASES.find((phrase) => phrase.id === id) ?? PHRASES[0];
