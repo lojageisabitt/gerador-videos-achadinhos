@@ -58,11 +58,14 @@
 .contentGrid input { width: 100%; height: 40px; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 9px; padding: 0 11px; font-size: 11px; outline: none; }
 .contentGrid input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px #fff0eb; }
 .wideField { grid-column: 1 / -1; }
-.actions { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 22px 28px; }
+.actions { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; padding: 22px 28px; }
 .actions button { height: 44px; border-radius: 10px; border: 0; cursor: pointer; font-size: 12px; font-weight: 700; }
 .primaryAction { color: white; background: var(--brand); box-shadow: 0 8px 22px rgba(255,92,53,.22); }
 .primaryAction:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.exportAction { color: var(--brand); background: #fff0eb; border: 1px solid #ffd2c4 !important; }
+.exportAction:disabled, .secondaryAction:disabled { opacity: .5; cursor: not-allowed; }
 .secondaryAction { padding: 0 18px; color: var(--muted); background: #f3f1ee; }
+.exportError { margin: 16px 28px -8px; color: #a13c25; background: #fff2ee; border-radius: 8px; padding: 10px 12px; font-size: 11px; }
 .previewColumn { min-height: 710px; display: flex; flex-direction: column; align-items: center; padding: 22px; background: #272624; border-radius: 20px; position: sticky; top: 18px; }
 .previewTop { width: 100%; display: flex; justify-content: space-between; color: #9f9c98; font-size: 9px; letter-spacing: .6px; margin-bottom: 15px; }
 .previewTop > div { color: #dedbd6; }
@@ -113,4 +116,4 @@
 @keyframes swingIn { 0% { opacity: 0; transform: translateY(-20%) rotate(-7deg); } 22%, 100% { opacity: 1; transform: none; } }
 @keyframes reveal { 0% { opacity: 0; clip-path: inset(0 50% 0 50% round 15%); } 24%, 100% { opacity: 1; clip-path: inset(0 round 15%); } }
 @media (max-width: 860px) { .shell { width: min(100% - 24px, 680px); } .header { height: 70px; } .templateLabel strong { display: none; } .intro { display: block; padding: 34px 4px 25px; } .intro p { margin-top: 18px; } .workspace { grid-template-columns: 1fr; } .previewColumn { position: static; min-height: 0; padding: 18px; } .phoneFrame { height: min(680px, 150vw); min-height: 480px; } }
-@media (max-width: 520px) { .shell { width: calc(100% - 16px); } .logo { font-size: 15px; } .templateLabel span { font-size: 8px; padding: 5px 6px; } .intro h1 { font-size: 35px; letter-spacing: -1.8px; } .section { padding: 22px 16px; } .thumbnails { grid-template-columns: repeat(3, 1fr); } .colorGrid, .contentGrid, .phraseOptions { grid-template-columns: 1fr; } .wideField { grid-column: auto; } .actions { padding: 18px 16px; grid-template-columns: 1fr; } .secondaryAction { grid-row: 2; } .phoneFrame { width: 100%; height: auto; min-height: 0; } }
+@media (max-width: 520px) { .shell { width: calc(100% - 16px); } .logo { font-size: 15px; } .templateLabel span { font-size: 8px; padding: 5px 6px; } .intro h1 { font-size: 35px; letter-spacing: -1.8px; } .section { padding: 22px 16px; } .thumbnails { grid-template-columns: repeat(3, 1fr); } .colorGrid, .contentGrid, .phraseOptions { grid-template-columns: 1fr; } .wideField { grid-column: auto; } .actions { padding: 18px 16px; grid-template-columns: 1fr; } .phoneFrame { width: 100%; height: auto; min-height: 0; } }
