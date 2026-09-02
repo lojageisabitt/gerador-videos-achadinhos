@@ -32,7 +32,26 @@ function drawCenteredText(ctx: CanvasRenderingContext2D, text: string, y: number
   return Math.min(lines.length, maxLines) * lineHeight;
 }
 
-function drawFrame(ctx: CanvasRenderingContext2D, image: ImageBitmap, index: number, time: number, slideTime: number, colors: ColorConfig, content: ProductContent) {
+type ExportImage = { source: HTMLImageElement; width: number; height: number };
+
+async function loadExportImage(file: File): Promise<ExportImage> {
+  const url = URL.createObjectURL(file);
+  const image = new Image();
+  image.decoding = "async";
+  image.src = url;
+  try {
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error(`Não foi possível abrir a imagem ${file.name}.`));
+      if (image.complete && image.naturalWidth > 0) resolve();
+    });
+    return { source: image, width: image.naturalWidth, height: image.naturalHeight };
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function drawFrame(ctx: CanvasRenderingContext2D, image: ExportImage, index: number, time: number, slideTime: number, colors: ColorConfig, content: ProductContent) {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
   ctx.fillStyle = colors.background;
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -79,7 +98,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, image: ImageBitmap, index: num
   ctx.globalAlpha = opacity;
   ctx.shadowColor = "rgba(0,0,0,.16)"; ctx.shadowBlur = 28; ctx.shadowOffsetY = 16;
   roundedRect(ctx, drawX, drawY, drawWidth, drawHeight, 30); ctx.clip();
-  ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+  ctx.drawImage(image.source, drawX, drawY, drawWidth, drawHeight);
   ctx.restore();
 
   ctx.textAlign = "center";
@@ -103,7 +122,7 @@ export async function exportMp4({ images, colors, content, speed, onProgress }: 
   if (!images.length) throw new Error("Adicione pelo menos uma imagem antes de exportar.");
   const { BufferTarget, CanvasSource, Mp4OutputFormat, Output, Quality, canEncodeVideo } = await import("mediabunny");
   if (!(await canEncodeVideo("avc", { width: WIDTH, height: HEIGHT }))) throw new Error("Este navegador não oferece codificação MP4/H.264. Use a versão atual do Chrome ou Edge.");
-  const bitmaps = await Promise.all(images.map((image) => createImageBitmap(image.file)));
+  const exportImages = await Promise.all(images.map((image) => loadExportImage(image.file)));
   const canvas = document.createElement("canvas");
   canvas.width = WIDTH; canvas.height = HEIGHT;
   const ctx = canvas.getContext("2d");
@@ -121,7 +140,7 @@ export async function exportMp4({ images, colors, content, speed, onProgress }: 
     for (let frame = 0; frame < totalFrames; frame++) {
       const time = frame / FPS;
       const imageIndex = Math.min(images.length - 1, Math.floor(time / secondsPerSlide));
-      drawFrame(ctx, bitmaps[imageIndex], imageIndex, time, time % secondsPerSlide, colors, content);
+      drawFrame(ctx, exportImages[imageIndex], imageIndex, time, time % secondsPerSlide, colors, content);
       await source.add(time, 1 / FPS, { keyFrame: frame % (FPS * 2) === 0 });
       if (frame % 3 === 0) onProgress((frame + 1) / totalFrames);
     }
@@ -138,6 +157,6 @@ export async function exportMp4({ images, colors, content, speed, onProgress }: 
     window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
     onProgress(1);
   } finally {
-    bitmaps.forEach((bitmap) => bitmap.close());
+    exportImages.forEach((image) => { image.source.src = ""; });
   }
 }
