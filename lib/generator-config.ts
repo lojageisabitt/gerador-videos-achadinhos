@@ -36,17 +36,17 @@ export const SPEEDS: Array<{ value: Speed; label: string; seconds: number }> = [
 ];
 export const getSlideDuration = (speed: Speed) => SPEEDS.find((item) => item.value === speed)?.seconds ?? 3.8;
 export const DEFAULT_ANIMATION: AnimationStyle = "fluidShowcase";
-export const ANIMATION_STYLES: Array<{ value: AnimationStyle; name: string; description: string; icon: string }> = [
-  { value: "fluidShowcase", name: "Vitrine fluida", description: "Formas comerciais em movimento", icon: "◒" },
-  { value: "aurora", name: "Aurora", description: "Luzes coloridas suaves", icon: "◉" },
-  { value: "goldenCinema", name: "Cinema dourado", description: "Feixe de luz e vinheta", icon: "✦" },
-  { value: "neonPulse", name: "Pulso neon", description: "Aros luminosos expansivos", icon: "◎" },
-  { value: "spotlight", name: "Holofote", description: "Luz de palco em movimento", icon: "◭" },
-  { value: "magicParticles", name: "Partículas mágicas", description: "Pontos de luz ascendentes", icon: "⠿" },
-  { value: "goldRain", name: "Chuva de ouro", description: "Confetes finos e elegantes", icon: "⋮" },
-  { value: "lightStreaks", name: "Rastros de luz", description: "Flashes diagonais velozes", icon: "╱" },
-  { value: "bokeh", name: "Bokeh", description: "Círculos de lente desfocados", icon: "●" },
-  { value: "starfield", name: "Céu estrelado", description: "Estrelas cintilantes", icon: "✧" },
+export const ANIMATION_STYLES: Array<{ value: AnimationStyle; description: string; icon: string }> = [
+  { value: "fluidShowcase", description: "Formas comerciais em movimento", icon: "◒" },
+  { value: "aurora", description: "Luzes coloridas suaves", icon: "◉" },
+  { value: "goldenCinema", description: "Feixe de luz com vinheta", icon: "✦" },
+  { value: "neonPulse", description: "Aros luminosos expansivos", icon: "◎" },
+  { value: "spotlight", description: "Luz de palco em movimento", icon: "◭" },
+  { value: "magicParticles", description: "Pontos de luz ascendentes", icon: "⠿" },
+  { value: "goldRain", description: "Confetes finos e elegantes", icon: "⋮" },
+  { value: "lightStreaks", description: "Flashes diagonais velozes", icon: "╱" },
+  { value: "bokeh", description: "Círculos de lente desfocados", icon: "●" },
+  { value: "starfield", description: "Estrelas cintilantes", icon: "✧" },
 ];
 
 export const DEFAULT_CONTENT: ProductContent = {
