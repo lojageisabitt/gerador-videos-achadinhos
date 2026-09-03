@@ -1,4 +1,4 @@
-import type { ColorConfig, ColorPreset, PhraseId, ProductContent, Speed } from "@/types/generator";
+import type { AnimationStyle, ColorConfig, ColorPreset, PhraseId, ProductContent, Speed } from "@/types/generator";
 
 export const MAX_IMAGES = 10;
 export const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
@@ -35,6 +35,19 @@ export const SPEEDS: Array<{ value: Speed; label: string; seconds: number }> = [
   { value: "fast", label: "Rápida", seconds: 2.5 },
 ];
 export const getSlideDuration = (speed: Speed) => SPEEDS.find((item) => item.value === speed)?.seconds ?? 3.8;
+export const DEFAULT_ANIMATION: AnimationStyle = "fluidShowcase";
+export const ANIMATION_STYLES: Array<{ value: AnimationStyle; name: string; description: string; icon: string }> = [
+  { value: "fluidShowcase", name: "Vitrine fluida", description: "Formas comerciais em movimento", icon: "◒" },
+  { value: "aurora", name: "Aurora", description: "Luzes coloridas suaves", icon: "◉" },
+  { value: "goldenCinema", name: "Cinema dourado", description: "Feixe de luz e vinheta", icon: "✦" },
+  { value: "neonPulse", name: "Pulso neon", description: "Aros luminosos expansivos", icon: "◎" },
+  { value: "spotlight", name: "Holofote", description: "Luz de palco em movimento", icon: "◭" },
+  { value: "magicParticles", name: "Partículas mágicas", description: "Pontos de luz ascendentes", icon: "⠿" },
+  { value: "goldRain", name: "Chuva de ouro", description: "Confetes finos e elegantes", icon: "⋮" },
+  { value: "lightStreaks", name: "Rastros de luz", description: "Flashes diagonais velozes", icon: "╱" },
+  { value: "bokeh", name: "Bokeh", description: "Círculos de lente desfocados", icon: "●" },
+  { value: "starfield", name: "Céu estrelado", description: "Estrelas cintilantes", icon: "✧" },
+];
 
 export const DEFAULT_CONTENT: ProductContent = {
   phraseId: "daily-find",
