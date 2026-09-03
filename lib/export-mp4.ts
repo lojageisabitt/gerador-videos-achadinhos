@@ -1,4 +1,4 @@
-import type { ColorConfig, ProductContent, Speed, UploadedImage } from "@/types/generator";
+import type { AnimationStyle, ColorConfig, ProductContent, Speed, UploadedImage } from "@/types/generator";
 import { getPhrase, getSlideDuration } from "./generator-config";
 
 type ExportOptions = {
@@ -6,6 +6,7 @@ type ExportOptions = {
   colors: ColorConfig;
   content: ProductContent;
   speed: Speed;
+  animation: AnimationStyle;
   onProgress: (progress: number) => void;
 };
 
@@ -34,6 +35,59 @@ function drawCenteredText(ctx: CanvasRenderingContext2D, text: string, y: number
 
 type ExportImage = { source: HTMLImageElement; width: number; height: number };
 
+function drawCinematicBackground(ctx: CanvasRenderingContext2D, animation: AnimationStyle, time: number, colors: ColorConfig) {
+  const wave = time * 1.25;
+  ctx.save();
+  ctx.fillStyle = colors.accent;
+  if (animation === "fluidShowcase") {
+    ctx.globalAlpha = .12;
+    ctx.beginPath(); ctx.ellipse(590 + Math.sin(wave) * 65, 80 + Math.cos(wave) * 30, 265, 145, -.3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-15 + Math.sin(wave * .75) * 40, 900 + Math.cos(wave) * 60, 180, 0, Math.PI * 2); ctx.fill();
+    ctx.translate(560 + Math.sin(wave * .55) * 95, 1110 + Math.cos(wave) * 30); ctx.rotate(-.45); ctx.fillRect(-90, -24, 260, 48);
+  } else if (animation === "aurora") {
+    [[90, 110, 260], [650, 610, 310], [220, 1220, 300]].forEach(([x, y, radius], index) => {
+      const gradient = ctx.createRadialGradient(x + Math.sin(wave + index) * 75, y + Math.cos(wave * .7 + index) * 80, 0, x, y, radius);
+      gradient.addColorStop(0, colors.accent); gradient.addColorStop(1, "transparent");
+      ctx.globalAlpha = .22; ctx.fillStyle = gradient; ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    });
+  } else if (animation === "goldenCinema" || animation === "spotlight") {
+    const sweep = animation === "spotlight" ? Math.sin(time * .8) * 190 : ((time * 135) % 1050) - 220;
+    const gradient = ctx.createLinearGradient(180 + sweep, 0, 500 + sweep, HEIGHT);
+    gradient.addColorStop(0, "transparent"); gradient.addColorStop(.5, colors.accent); gradient.addColorStop(1, "transparent");
+    ctx.globalAlpha = animation === "spotlight" ? .18 : .24; ctx.fillStyle = gradient; ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    if (animation === "goldenCinema") { ctx.globalAlpha = .22; ctx.fillStyle = colors.text; ctx.fillRect(0, 0, 28, HEIGHT); ctx.fillRect(WIDTH - 28, 0, 28, HEIGHT); }
+  } else if (animation === "neonPulse") {
+    for (let index = 0; index < 7; index++) {
+      const progress = (time * .28 + index / 7) % 1;
+      ctx.globalAlpha = (1 - progress) * .42; ctx.strokeStyle = colors.accent; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(WIDTH / 2, HEIGHT * .48, 55 + progress * 470, 0, Math.PI * 2); ctx.stroke();
+    }
+  } else if (animation === "magicParticles" || animation === "starfield") {
+    for (let index = 0; index < 28; index++) {
+      const seedX = (index * 83) % WIDTH;
+      const y = animation === "starfield" ? 30 + ((index * 137) % 1170) : HEIGHT - ((time * (65 + index % 5 * 14) + index * 91) % 1360);
+      const alpha = animation === "starfield" ? .18 + Math.abs(Math.sin(time * 2.4 + index)) * .64 : .2 + (index % 4) * .13;
+      ctx.globalAlpha = alpha; ctx.beginPath(); ctx.arc(seedX, y, 2 + index % 4, 0, Math.PI * 2); ctx.fill();
+    }
+  } else if (animation === "goldRain") {
+    for (let index = 0; index < 24; index++) {
+      const x = (index * 91) % WIDTH; const y = ((time * (95 + index % 4 * 22) + index * 74) % 1420) - 80;
+      ctx.save(); ctx.globalAlpha = .55; ctx.translate(x, y); ctx.rotate(time + index); ctx.fillRect(-2, -10, 5, 20); ctx.restore();
+    }
+  } else if (animation === "lightStreaks") {
+    for (let index = 0; index < 7; index++) {
+      const x = ((time * 250 + index * 190) % 1200) - 360;
+      ctx.globalAlpha = .28; ctx.lineWidth = 3; ctx.strokeStyle = colors.accent; ctx.beginPath(); ctx.moveTo(x, index * 205); ctx.lineTo(x + 390, index * 205 - 210); ctx.stroke();
+    }
+  } else if (animation === "bokeh") {
+    for (let index = 0; index < 16; index++) {
+      const x = (index * 107) % WIDTH + Math.sin(time + index) * 28; const y = (index * 173) % HEIGHT + Math.cos(time * .7 + index) * 42;
+      ctx.globalAlpha = .07 + (index % 4) * .025; ctx.beginPath(); ctx.arc(x, y, 24 + index % 5 * 11, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
 async function loadExportImage(file: File): Promise<ExportImage> {
   const url = URL.createObjectURL(file);
   const image = new Image();
@@ -51,19 +105,12 @@ async function loadExportImage(file: File): Promise<ExportImage> {
   }
 }
 
-function drawFrame(ctx: CanvasRenderingContext2D, image: ExportImage, index: number, time: number, slideTime: number, colors: ColorConfig, content: ProductContent) {
+function drawFrame(ctx: CanvasRenderingContext2D, image: ExportImage, index: number, time: number, slideTime: number, colors: ColorConfig, content: ProductContent, animation: AnimationStyle) {
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
   ctx.fillStyle = colors.background;
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  const wave = time * 1.25;
-  ctx.save();
-  ctx.globalAlpha = 0.12;
-  ctx.fillStyle = colors.accent;
-  ctx.beginPath(); ctx.ellipse(590 + Math.sin(wave) * 65, 80 + Math.cos(wave) * 30, 265, 145, -.3, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(-15 + Math.sin(wave * .75) * 40, 900 + Math.cos(wave) * 60, 180, 0, Math.PI * 2); ctx.fill();
-  ctx.translate(560 + Math.sin(wave * .55) * 95, 1110 + Math.cos(wave) * 30); ctx.rotate(-.45); ctx.fillRect(-90, -24, 260, 48);
-  ctx.restore();
+  drawCinematicBackground(ctx, animation, time, colors);
 
   const phrase = getPhrase(content.phraseId);
   ctx.save();
@@ -118,7 +165,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, image: ExportImage, index: num
   ctx.fillStyle = colors.background; ctx.font = "800 19px Arial"; ctx.textBaseline = "middle"; ctx.fillText(`${content.cta || "Veja aqui"}  →`, WIDTH / 2, textY + 33);
 }
 
-export async function exportMp4({ images, colors, content, speed, onProgress }: ExportOptions) {
+export async function exportMp4({ images, colors, content, speed, animation, onProgress }: ExportOptions) {
   if (!images.length) throw new Error("Adicione pelo menos uma imagem antes de exportar.");
   const { BufferTarget, CanvasSource, Mp4OutputFormat, Output, Quality, canEncodeVideo } = await import("mediabunny");
   if (!(await canEncodeVideo("avc", { width: WIDTH, height: HEIGHT }))) throw new Error("Este navegador não oferece codificação MP4/H.264. Use a versão atual do Chrome ou Edge.");
@@ -140,7 +187,7 @@ export async function exportMp4({ images, colors, content, speed, onProgress }: 
     for (let frame = 0; frame < totalFrames; frame++) {
       const time = frame / FPS;
       const imageIndex = Math.min(images.length - 1, Math.floor(time / secondsPerSlide));
-      drawFrame(ctx, exportImages[imageIndex], imageIndex, time, time % secondsPerSlide, colors, content);
+      drawFrame(ctx, exportImages[imageIndex], imageIndex, time, time % secondsPerSlide, colors, content, animation);
       await source.add(time, 1 / FPS, { keyFrame: frame % (FPS * 2) === 0 });
       if (frame % 3 === 0) onProgress((frame + 1) / totalFrames);
     }
