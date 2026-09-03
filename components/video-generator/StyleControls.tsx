@@ -14,6 +14,6 @@ export function StyleControls({ colors, speed, animation, onColors, onSpeed, onA
     <label className={styles.label}>Velocidade</label>
     <div className={styles.segmented}>{SPEEDS.map((item) => <button type="button" key={item.value} className={speed === item.value ? styles.activeSegment : ""} onClick={() => onSpeed(item.value)}>{item.label}</button>)}</div>
     <label className={styles.label}>Animação cinematográfica</label>
-    <div className={styles.animationGrid}>{ANIMATION_STYLES.map((item) => <button type="button" key={item.value} className={animation === item.value ? styles.activeAnimation : ""} onClick={() => onAnimation(item.value)} aria-pressed={animation === item.value}><i>{item.icon}</i><span><strong>{item.name}</strong><small>{item.description}</small></span></button>)}</div>
+    <div className={styles.animationGrid}>{ANIMATION_STYLES.map((item) => <button type="button" key={item.value} className={animation === item.value ? styles.activeAnimation : ""} onClick={() => onAnimation(item.value)} aria-pressed={animation === item.value}><i>{item.icon}</i><span>{item.description}</span></button>)}</div>
   </section>;
 }

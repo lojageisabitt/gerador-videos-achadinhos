@@ -50,12 +50,31 @@ function drawCinematicBackground(ctx: CanvasRenderingContext2D, animation: Anima
       gradient.addColorStop(0, colors.accent); gradient.addColorStop(1, "transparent");
       ctx.globalAlpha = .22; ctx.fillStyle = gradient; ctx.fillRect(0, 0, WIDTH, HEIGHT);
     });
-  } else if (animation === "goldenCinema" || animation === "spotlight") {
-    const sweep = animation === "spotlight" ? Math.sin(time * .8) * 190 : ((time * 135) % 1050) - 220;
+  } else if (animation === "goldenCinema") {
+    const cycle = (time % 6) / 6;
+    const eased = cycle < .15 ? 0 : cycle > .88 ? 1 : (cycle - .15) / .73;
+    const beamX = -310 + eased * 1370;
+    ctx.save();
+    ctx.translate(beamX, HEIGHT / 2);
+    ctx.rotate(.3);
+    const beam = ctx.createLinearGradient(-160, 0, 160, 0);
+    beam.addColorStop(0, "transparent"); beam.addColorStop(.5, colors.accent); beam.addColorStop(1, "transparent");
+    ctx.globalAlpha = cycle < .15 || cycle > .94 ? 0 : .28;
+    ctx.fillStyle = beam; ctx.fillRect(-160, -HEIGHT, 320, HEIGHT * 2);
+    ctx.restore();
+    const vignette = ctx.createRadialGradient(WIDTH / 2, HEIGHT * .42, 260, WIDTH / 2, HEIGHT * .42, 790);
+    vignette.addColorStop(0, "transparent"); vignette.addColorStop(1, colors.text);
+    ctx.globalAlpha = .24; ctx.fillStyle = vignette; ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = colors.accent;
+    for (let index = 0; index < 18; index++) {
+      ctx.globalAlpha = .12 + Math.abs(Math.sin(time * 2.5 + index)) * .45;
+      ctx.beginPath(); ctx.arc((index * 97) % WIDTH, 170 + ((index * 61) % 760), 1.5 + index % 2, 0, Math.PI * 2); ctx.fill();
+    }
+  } else if (animation === "spotlight") {
+    const sweep = Math.sin(time * .8) * 190;
     const gradient = ctx.createLinearGradient(180 + sweep, 0, 500 + sweep, HEIGHT);
     gradient.addColorStop(0, "transparent"); gradient.addColorStop(.5, colors.accent); gradient.addColorStop(1, "transparent");
-    ctx.globalAlpha = animation === "spotlight" ? .18 : .24; ctx.fillStyle = gradient; ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    if (animation === "goldenCinema") { ctx.globalAlpha = .22; ctx.fillStyle = colors.text; ctx.fillRect(0, 0, 28, HEIGHT); ctx.fillRect(WIDTH - 28, 0, 28, HEIGHT); }
+    ctx.globalAlpha = .18; ctx.fillStyle = gradient; ctx.fillRect(0, 0, WIDTH, HEIGHT);
   } else if (animation === "neonPulse") {
     for (let index = 0; index < 7; index++) {
       const progress = (time * .28 + index / 7) % 1;
