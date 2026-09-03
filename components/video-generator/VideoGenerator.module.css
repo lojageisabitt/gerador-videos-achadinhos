@@ -35,7 +35,7 @@
 .moveButtons button { width: 23px; height: 20px; border: 0; border-radius: 5px; background: rgba(255,255,255,.94); cursor: pointer; font-size: 11px; }
 .moveButtons button:disabled { opacity: .38; cursor: default; }
 .label { display: block; color: var(--muted); font-size: 10px; font-weight: 650; margin: 18px 0 9px; text-transform: uppercase; letter-spacing: .8px; }
-.presets { display: flex; gap: 9px; }
+.presets { display: flex; flex-wrap: wrap; gap: 9px; }
 .preset { display: flex; gap: 2px; padding: 4px; background: white; border: 1px solid var(--line); border-radius: 99px; cursor: pointer; }
 .preset i { width: 19px; height: 19px; border-radius: 50%; border: 1px solid rgba(0,0,0,.08); }
 .activePreset { border-color: var(--brand); box-shadow: 0 0 0 2px #ffe4db; }
